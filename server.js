@@ -37,7 +37,20 @@ app.post('/todos', function(req,res){
 	todos.push(body);
 	res.json(body);
 });
-//GET /todos/:id
+
+app.delete('/todos/:id', function(req,res){
+	var todoId = parseInt(req.params.id,10);
+	var match = _.findWhere(todos,{id:todoId});
+	
+
+	if(match){
+		res.json(match);
+		todos = _.without(todos, match);
+	} else {
+		res.send("404 error");
+	}
+});
+
 app.listen(PORT, function(){
 	console.log('Listening on ' + PORT)
 });
