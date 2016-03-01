@@ -9,6 +9,7 @@ var todoNextId = 1;
 app.use(bodyParser.json())
 app.get('/', function(req,res){
 	res.send("todo api root");
+
 });
 
 
@@ -22,6 +23,16 @@ app.get('/todos', function(req,res){
 	} else if(query.hasOwnProperty('completed')&& query.completed==='false') {
 		filtered = _.where(todos,{completed:false})
 	}
+
+	
+	
+	if(query.hasOwnProperty('desc')&& query.desc.length>0) {
+		filtered = _.filter(filtered, function(todo){
+				return todo.description.toLowerCase().indexOf(query.desc.toLowerCase()) > -1;
+			});
+	}
+
+	
 	res.json(filtered);
 })
 app.get('/todos/:id', function(req,res){
@@ -86,5 +97,6 @@ app.put('/todos/:id', function(req,res){
 });
 
 app.listen(PORT, function(){
-	console.log('Listening on ' + PORT)
+	console.log('Listening on ' + PORT);
+
 });
