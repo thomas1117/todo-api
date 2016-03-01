@@ -1,4 +1,4 @@
-var express=require('express');
+var express = require('express');
 var bodyParser = require('body-parser');
 var _ = require('underscore');
 var app = express();
@@ -7,49 +7,55 @@ var todos = [];
 var todoNextId = 1;
 
 app.use(bodyParser.json())
-app.get('/', function(req,res){
+app.get('/', function(req, res) {
 	res.send("todo api root");
 
 });
 
 
 //GET /todos
-app.get('/todos', function(req,res){
+app.get('/todos', function(req, res) {
 	var query = req.query;
 	var filtered = todos;
 
-	if(query.hasOwnProperty('completed')&& query.completed==='true') {
-		filtered = _.where(todos,{completed:true})
-	} else if(query.hasOwnProperty('completed')&& query.completed==='false') {
-		filtered = _.where(todos,{completed:false})
+	if (query.hasOwnProperty('completed') && query.completed === 'true') {
+		filtered = _.where(todos, {
+			completed: true
+		})
+	} else if (query.hasOwnProperty('completed') && query.completed === 'false') {
+		filtered = _.where(todos, {
+			completed: false
+		})
 	}
 
-	
-	
-	if(query.hasOwnProperty('desc')&& query.desc.length>0) {
-		filtered = _.filter(filtered, function(todo){
-				return todo.description.toLowerCase().indexOf(query.desc.toLowerCase()) > -1;
-			});
+
+
+	if (query.hasOwnProperty('desc') && query.desc.length > 0) {
+		filtered = _.filter(filtered, function(todo) {
+			return todo.description.toLowerCase().indexOf(query.desc.toLowerCase()) > -1;
+		});
 	}
 
-	
+
 	res.json(filtered);
 })
-app.get('/todos/:id', function(req,res){
-	var todoId = parseInt(req.params.id,10);
-	var match = _.findWhere(todos,{id:todoId})
-	
-	match ? res.json(match) : res.send("404 error"); 
-		
-	
+app.get('/todos/:id', function(req, res) {
+	var todoId = parseInt(req.params.id, 10);
+	var match = _.findWhere(todos, {
+		id: todoId
+	})
+
+	match ? res.json(match) : res.send("404 error");
+
+
 });
 
-app.post('/todos', function(req,res){
-	var body = _.pick(req.body,'description','completed');
-	if(!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length===0) {
+app.post('/todos', function(req, res) {
+	var body = _.pick(req.body, 'description', 'completed');
+	if (!_.isBoolean(body.completed) || !_.isString(body.description) || body.description.trim().length === 0) {
 		return res.status(400).send();
 	}
-	
+
 	body.description = body.description.trim();
 	body.id = todoNextId++;
 
@@ -57,12 +63,14 @@ app.post('/todos', function(req,res){
 	res.json(body);
 });
 
-app.delete('/todos/:id', function(req,res){
-	var todoId = parseInt(req.params.id,10);
-	var match = _.findWhere(todos,{id:todoId});
-	
+app.delete('/todos/:id', function(req, res) {
+	var todoId = parseInt(req.params.id, 10);
+	var match = _.findWhere(todos, {
+		id: todoId
+	});
 
-	if(match){
+
+	if (match) {
 		res.json(match);
 		todos = _.without(todos, match);
 	} else {
@@ -70,33 +78,35 @@ app.delete('/todos/:id', function(req,res){
 	}
 });
 
-app.put('/todos/:id', function(req,res){
-	var todoId = parseInt(req.params.id,10);
-	var match = _.findWhere(todos,{id:todoId});
-	var body = _.pick(req.body,'description','completed');
-	var validAttributes={};
+app.put('/todos/:id', function(req, res) {
+	var todoId = parseInt(req.params.id, 10);
+	var match = _.findWhere(todos, {
+		id: todoId
+	});
+	var body = _.pick(req.body, 'description', 'completed');
+	var validAttributes = {};
 
-	if(!match) {
+	if (!match) {
 		return res.status(404).send();
 	}
 
-	if(body.hasOwnProperty('completed')&& _.isBoolean(body.completed)){
+	if (body.hasOwnProperty('completed') && _.isBoolean(body.completed)) {
 		validAttributes.completed = body.completed;
-	} else if(body.hasOwnProperty('completed')) {
+	} else if (body.hasOwnProperty('completed')) {
 		return res.status(400).send();
 	}
 
-	if(body.hasOwnProperty('description')&& _.isString(body.description)&& body.description.trim().length > 0) {
+	if (body.hasOwnProperty('description') && _.isString(body.description) && body.description.trim().length > 0) {
 		validAttributes.description = body.description;
-	} else if(body.hasOwnProperty('description')) {
+	} else if (body.hasOwnProperty('description')) {
 		res.status(400).send();
 	}
-	
-	_.extend(match,validAttributes);
+
+	_.extend(match, validAttributes);
 	res.json(match);
 });
 
-app.listen(PORT, function(){
+app.listen(PORT, function() {
 	console.log('Listening on ' + PORT);
 
 });
