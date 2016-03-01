@@ -14,7 +14,15 @@ app.get('/', function(req,res){
 
 //GET /todos
 app.get('/todos', function(req,res){
-	res.json(todos);
+	var query = req.query;
+	var filtered = todos;
+
+	if(query.hasOwnProperty('completed')&& query.completed==='true') {
+		filtered = _.where(todos,{completed:true})
+	} else if(query.hasOwnProperty('completed')&& query.completed==='false') {
+		filtered = _.where(todos,{completed:false})
+	}
+	res.json(filtered);
 })
 app.get('/todos/:id', function(req,res){
 	var todoId = parseInt(req.params.id,10);
