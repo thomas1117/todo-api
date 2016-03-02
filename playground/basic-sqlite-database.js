@@ -39,13 +39,13 @@ sequelize.sync({
 	// 	})
 	// 	.then(function(){
 	// 		// return Todo.findById(1)
-	// 		return Todo.findAll({
-	// 			where: {
-	// 			description: {
-	// 				$like: '%do%'
-	// 			}
-	// 		}
-	// 	})
+		// 	return Todo.findAll({
+		// 		where: {
+		// 		description: {
+		// 			$like: '%do%'
+		// 		}
+		// 	}
+		// })
 	// 	})
 	// 	.then(function(todos){
 	// 		if(todos) {
